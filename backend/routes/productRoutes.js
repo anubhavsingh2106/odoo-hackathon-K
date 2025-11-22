@@ -2,9 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const auth = require('../middleware/authMiddleware');
-const checkRole = require('../middleware/roleMiddleware'); // <--- Import kiya
 
-// GET: Sab dekh sakte hain (Manager + Staff)
+// GET ALL PRODUCTS (with current total stock)
 router.get('/', auth, async (req, res) => {
     try {
         const [products] = await db.query(`
@@ -21,8 +20,8 @@ router.get('/', auth, async (req, res) => {
     }
 });
 
-// POST: Sirf 'manager' naya product bana sakta hai
-router.post('/', auth, checkRole(['manager']), async (req, res) => { // <--- Rok-tok lagayi
+// CREATE PRODUCT
+router.post('/', auth, async (req, res) => {
     const { sku, name, category_id, unit, min_stock_level } = req.body;
     try {
         const [result] = await db.query(
